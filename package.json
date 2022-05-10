@@ -1,0 +1,46 @@
+{
+  "name": "browser-session",
+  "version": "1.0.5",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "npx jest --ci --config jest.config.js --env=./test/browser-env.js"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jc-lab/browser-session.git"
+  },
+  "author": "Joseph Lee <joseph@jc-lab.net>",
+  "contributors": [
+    "Yeonyu <hayan@yeonyu.dev>"
+  ],
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/jc-lab/browser-session/issues"
+  },
+  "homepage": "https://github.com/jc-lab/browser-session#readme",
+  "description": "",
+  "packageManager": "yarn@3.2.0",
+  "dependencies": {
+    "node-forge": "^1.3.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.5.0",
+    "@types/jsdom": "^16.2.14",
+    "@types/node-forge": "^1.0.2",
+    "@typescript-eslint/eslint-plugin": "^5.23.0",
+    "@typescript-eslint/parser": "^5.23.0",
+    "babel-jest": "^28.1.0",
+    "eslint": "^8.15.0",
+    "eslint-plugin-import": "^2.26.0",
+    "jest": "^28.1.0",
+    "jest-environment-jsdom": "^28.1.0",
+    "ts-jest": "^28.0.2",
+    "tsc": "^2.0.4",
+    "typescript": "^4.6.4"
+  }
+}
