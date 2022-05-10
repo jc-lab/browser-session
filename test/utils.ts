@@ -30,7 +30,7 @@ export function newStorage(window: Window): Promise<BrowserSession> {
   });
   return Promise.resolve()
       .then(() => {
-        return storage.start(newSessionStorageWindow(window));
+        return storage.start(window);
       })
       .then(() => storage);
 }

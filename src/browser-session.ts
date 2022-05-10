@@ -59,15 +59,24 @@ export class BrowserSession {
     }
 
     return this.readSecretFromSessionStorage()
+        .then((storedInSession) => {
+          if (!storedInSession) {
+            return this.readSecretFromRemote()
+                .then((storedInRemote) => {
+                  if (storedInRemote) {
+                    this.saveToSessionStorage();
+                  }
+                  return storedInRemote;
+                });
+          }
+          return storedInSession;
+        })
         .then((alreadyExists) => {
           if (!alreadyExists) {
             return this.generateSecretKey()
                 .then((secretData) => {
-                  this._window.sessionStorage.setItem(
-                      this.makeKey(BrowserSession.STORAGE_SECRET_KEY_NAME),
-                      JSON.stringify(secretData)
-                  );
                   this._secretData = secretData;
+                  this.saveToSessionStorage();
                 });
           }
         })
@@ -139,40 +148,57 @@ export class BrowserSession {
     try {
       const existsSecretKeyValue = this._window.sessionStorage.getItem(this.makeKey(BrowserSession.STORAGE_SECRET_KEY_NAME));
       if (existsSecretKeyValue) {
-        this._secretData = JSON.parse(existsSecretKeyValue) as SecretData;
+        const serialized = JSON.parse(existsSecretKeyValue) as SecretData;
+        this._secretData = {
+          iv: forge.util.decode64(serialized.iv),
+          key: forge.util.decode64(serialized.key)
+        }
         return Promise.resolve(true);
       }
-
-      return new Promise<boolean>((resolve, reject) => {
-        const cleanup = () => {
-          clearTimeout(timerId);
-          this._fetchResponseCallback = null;
-        };
-        this._fetchResponseCallback = (data: SecretData) => {
-          cleanup();
-          this._secretData = data;
-          resolve(true);
-        };
-        const timerId = setTimeout(() => {
-          cleanup();
-          resolve(false);
-        }, this._options.timeout);
-        try {
-          this._window.localStorage.setItem(
-              this.makeKey(BrowserSession.STORAGE_FETCH_REQUEST_NAME),
-              'true'
-          );
-          this._window.localStorage.removeItem(
-              this.makeKey(BrowserSession.STORAGE_FETCH_REQUEST_NAME),
-          );
-        } catch (e) {
-          cleanup();
-          reject(e);
-        }
-      });
+      return Promise.resolve(false);
     } catch (e) {
       return Promise.reject(e);
     }
+  }
+
+  private readSecretFromRemote(): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      const cleanup = () => {
+        clearTimeout(timerId);
+        this._fetchResponseCallback = null;
+      };
+      this._fetchResponseCallback = (data: SecretData) => {
+        cleanup();
+        this._secretData = data;
+        resolve(true);
+      };
+      const timerId = setTimeout(() => {
+        cleanup();
+        resolve(false);
+      }, this._options.timeout);
+      try {
+        this._window.localStorage.setItem(
+            this.makeKey(BrowserSession.STORAGE_FETCH_REQUEST_NAME),
+            'true'
+        );
+        this._window.localStorage.removeItem(
+            this.makeKey(BrowserSession.STORAGE_FETCH_REQUEST_NAME),
+        );
+      } catch (e) {
+        cleanup();
+        reject(e);
+      }
+    });
+  }
+
+  private saveToSessionStorage(): void {
+    this._window.sessionStorage.setItem(
+        this.makeKey(BrowserSession.STORAGE_SECRET_KEY_NAME),
+        JSON.stringify({
+          iv: forge.util.encode64(this._secretData.iv),
+          key: forge.util.encode64(this._secretData.key)
+        })
+    );
   }
 
   private generateSecretKey(): Promise<SecretData> {
