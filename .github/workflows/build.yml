@@ -22,6 +22,5 @@ jobs:
           key: ${{runner.OS}}-build-node_${{ matrix.nodeVersion }}-${{hashFiles('yarn.lock')}}
           restore-keys: |
             ${{runner.OS}}-build-node_${{ matrix.nodeVersion }}-*
-      - name: yarn berry
       - run: yarn install
       - run: yarn test
