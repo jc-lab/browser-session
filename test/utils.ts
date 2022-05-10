@@ -26,7 +26,8 @@ export function newSubWindow(rootWindow: Window): Promise<Window> {
 
 export function newStorage(window: Window): Promise<BrowserSession> {
   const storage = new BrowserSession({
-    timeout: 100
+    timeout: 100,
+    namespace: 'test.'
   });
   return Promise.resolve()
       .then(() => {

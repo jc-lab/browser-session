@@ -125,7 +125,7 @@ export class BrowserSession {
   }
 
   public getItem(key: string): string | null {
-    const encryptedB64 = this._window.localStorage.getItem(key);
+    const encryptedB64 = this._window.localStorage.getItem(this.makeKey(key));
     if (!encryptedB64) return null;
     const encrypted = forge.util.decode64(encryptedB64);
 
