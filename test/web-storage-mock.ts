@@ -1,5 +1,3 @@
-import { JSDOM } from 'jsdom';
-
 export class WebStorageMock implements Storage {
   private store: Record<string, string> = {};
   [name: string]: any;
@@ -32,7 +30,7 @@ export class WebStorageMock implements Storage {
 export function newSessionStorageWindow(window: Window): Window {
   const sessionStorage = new WebStorageMock();
   return new Proxy<Window>(window as any, {
-    get: function (target, name) {
+    get: function (target, name: any) {
       if (name === 'sessionStorage') {
         return sessionStorage;
       }

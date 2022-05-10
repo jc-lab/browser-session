@@ -63,6 +63,10 @@ export class BrowserSession {
           if (!alreadyExists) {
             return this.generateSecretKey()
                 .then((secretData) => {
+                  this._window.sessionStorage.setItem(
+                      this.makeKey(BrowserSession.STORAGE_SECRET_KEY_NAME),
+                      JSON.stringify(secretData)
+                  );
                   this._secretData = secretData;
                 });
           }
