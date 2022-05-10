@@ -23,7 +23,7 @@ export class BrowserSession {
   public static STORAGE_FETCH_REQUEST_NAME = '$secret:fetch:req';
   public static STORAGE_FETCH_RESPONSE_NAME = '$secret:fetch:res';
 
-  private readonly _options: BrowserSessionOptions;
+  public readonly options: BrowserSessionOptions;
   private _window!: Window;
   private _secretData!: SecretData;
 
@@ -33,17 +33,17 @@ export class BrowserSession {
   constructor(namespace: string);
   constructor(options: Partial<BrowserSessionOptions>);
   constructor(namespaceOrOptions?: Partial<BrowserSessionOptions> | string) {
-    this._options = {
+    this.options = {
       namespace: '',
       timeout: 1000
     };
 
     if (namespaceOrOptions) {
       if (typeof namespaceOrOptions === 'string') {
-        this._options.namespace = namespaceOrOptions;
+        this.options.namespace = namespaceOrOptions;
       } else {
-        this._options.namespace = namespaceOrOptions.namespace || '';
-        this._options.timeout = this._options.timeout || 1000;
+        this.options.namespace = namespaceOrOptions.namespace || '';
+        this.options.timeout = this.options.timeout || 1000;
       }
     }
   }
@@ -175,7 +175,7 @@ export class BrowserSession {
       const timerId = setTimeout(() => {
         cleanup();
         resolve(false);
-      }, this._options.timeout);
+      }, this.options.timeout);
       try {
         this._window.localStorage.setItem(
             this.makeKey(BrowserSession.STORAGE_FETCH_REQUEST_NAME),
@@ -218,6 +218,6 @@ export class BrowserSession {
   }
 
   private makeKey(key: string): string {
-    return `${this._options.namespace}${key}`;
+    return `${this.options.namespace}${key}`;
   }
 }

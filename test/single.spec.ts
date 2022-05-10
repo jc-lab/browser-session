@@ -12,7 +12,7 @@ describe('single', () => {
     browserSession.setItem('aaaa', 'abcdefg');
     expect(browserSession.getItem('aaaa')).toEqual('abcdefg');
 
-    expect(window.localStorage.getItem('aaaa')).not.toBeNull();
-    expect(window.sessionStorage.getItem(BrowserSession.STORAGE_SECRET_KEY_NAME)).not.toBeNull();
+    expect(window.localStorage.getItem(`${browserSession.options.namespace}aaaa`)).not.toBeNull();
+    expect(window.sessionStorage.getItem(`${browserSession.options.namespace}${BrowserSession.STORAGE_SECRET_KEY_NAME}`)).not.toBeNull();
   });
 });
