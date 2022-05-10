@@ -21,7 +21,7 @@ storage.getItem('key');
 - Local Storage stores encrypted values.
 - When start a new BrowserSession, it communicates with the currently open page(s) to obtain an encryption key.
 - If there is no open page and timeout occurs, a new encryption key is generated and stored in Session Storage.
-- Because session storage is used, the encryption key is maintained even if you refresh within the same tab or change pages.
+- The encryption key is kept even if you refresh within the same tab or change pages because session storage is used.
 
 # Contributors
 

@@ -1,18 +1,11 @@
 import {
-  BrowserSession
-} from '../src';
-
-function newStorage(): Promise<BrowserSession> {
-  const storage = new BrowserSession({
-    timeout: 100
-  });
-  return storage.start(window)
-      .then(() => storage);
-}
+  newStorage,
+  newWindow
+} from './utils';
 
 describe('single', () => {
   it('firstSessionTest', async () => {
-    const browserSession = await newStorage();
+    const browserSession = await newStorage(newWindow());
 
     browserSession.setItem('aaaa', 'abcdefg');
     expect(browserSession.getItem('aaaa')).toEqual('abcdefg');

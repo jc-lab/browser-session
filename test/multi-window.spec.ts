@@ -1,44 +1,16 @@
 import {
-  BrowserSession
-} from '../src';
-import {
-  newSessionStorageWindow
-} from './web-storage-mock';
-
-function newSubWindow(): Promise<Window> {
-  const frame = window.document.createElement('iframe');
-  return new Promise<Window>((resolve, reject) => {
-    frame.onload = () => {
-      resolve(frame.contentWindow as any);
-    };
-    frame.onerror = (err) => {
-      reject(err);
-    };
-    frame.src = 'about:blank';
-    window.document.body.appendChild(frame);
-  });
-}
-
-function newStorage(explicitWindow?: Window): Promise<BrowserSession> {
-  const storage = new BrowserSession({
-    timeout: 100
-  });
-  return Promise.resolve()
-      .then(async () => {
-        if (explicitWindow) {
-          return storage.start(explicitWindow);
-        } else {
-          return storage.start(newSessionStorageWindow(await newSubWindow()));
-        }
-      })
-      .then(() => storage);
-}
+  newStorage,
+  newSubWindow,
+  newWindow
+} from './utils';
 
 describe('multiWindow', () => {
   it('sessionPropagationTest', async () => {
+    const rootWindow = newWindow();
+
     const sessions = [
-      await newStorage(),
-      await newStorage()
+      await newStorage(await newSubWindow(rootWindow)),
+      await newStorage(await newSubWindow(rootWindow))
     ];
 
     sessions[0].setItem('bbbb', 'abcdefg');
@@ -47,9 +19,11 @@ describe('multiWindow', () => {
 
 
   it('autoDestroyTest', async () => {
+    const rootWindow = newWindow();
+
     const windows: Window[] = [
-      await newSubWindow() as any,
-      await newSubWindow() as any
+      await newSubWindow(rootWindow) as any,
+      await newSubWindow(rootWindow) as any
     ];
     const sessions = [
       await newStorage(windows[0]),
@@ -64,7 +38,7 @@ describe('multiWindow', () => {
     windows[0].close();
     windows[1].close();
 
-    const afterSession = await newStorage(await newSubWindow());
+    const afterSession = await newStorage(await newSubWindow(rootWindow));
     expect(afterSession.getItem('bbbb')).toBeNull();
   });
 });
