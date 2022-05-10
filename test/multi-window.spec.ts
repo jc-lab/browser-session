@@ -3,8 +3,8 @@ import {
   newSubWindow,
   newWindow
 } from './utils';
-import {BrowserSession} from "../lib";
-import {newSessionStorageWindow} from "./web-storage-mock";
+import {BrowserSession} from '../src';
+import {newSessionStorageWindow} from './web-storage-mock';
 
 describe('multiWindow', () => {
   it('sessionPropagationTest', async () => {

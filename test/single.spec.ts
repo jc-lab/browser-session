@@ -2,7 +2,7 @@ import {
   newStorage,
   newWindow
 } from './utils';
-import {BrowserSession} from "../lib";
+import {BrowserSession} from '../src';
 
 describe('single', () => {
   it('firstSessionTest', async () => {
