@@ -144,6 +144,28 @@ export class BrowserSession {
     return cipher.output.getBytes();
   }
 
+  public removeItem(key: string): void {
+    this._window.localStorage.removeItem(this.makeKey(key));
+  }
+
+  public getKeys(): string[] {
+    const keys: string[] = [];
+    for (let i = 0; i < this._window.localStorage.length; i += 1) {
+      const keyName = this._window.localStorage.key(i);
+      if (keyName && keyName.startsWith(this.options.namespace)) {
+        keys.push(keyName.substring(this.options.namespace.length));
+      }
+    }
+    return keys;
+  }
+
+  public clear(): void {
+    this.getKeys()
+        .forEach((key) => {
+          this._window.localStorage.removeItem(this.makeKey(key));
+        });
+  }
+
   private readSecretFromSessionStorage(): Promise<boolean> {
     try {
       const existsSecretKeyValue = this._window.sessionStorage.getItem(this.makeKey(BrowserSession.STORAGE_SECRET_KEY_NAME));
